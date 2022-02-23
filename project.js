@@ -28,6 +28,7 @@ export class Project extends Scene {
     constructor() {
         // constructor(): Scenes begin by populating initial values like the Shapes and Materials they'll need.
         super();
+        this.person_transform = null;
 
         // TODO:  Create two cubes, including one with the default texture coordinates (from 0 to 1), and one with the modified
         //        texture coordinates as required for cube #2.  You can either do this by modifying the cube code or by modifying
@@ -65,7 +66,11 @@ export class Project extends Scene {
     }
 
     make_control_panel() {
-        // TODO:  Implement requirement #5 using a key_triggered_button that responds to the 'c' key.
+        // implement movements to left and right
+        this.key_triggered_button("Dodge to left", ["ArrowLeft"],
+            () => this.playerMove = () => this.left);
+        this.key_triggered_button("Dodge to right", ["ArrowRight"],
+            () => this.playerMove = () => this.right);
     }
 
     display(context, program_state) {
@@ -83,7 +88,6 @@ export class Project extends Scene {
             1,
             100
         );
-
 
         // Important variables
         let t = program_state.animation_time / 1000,
@@ -125,21 +129,31 @@ export class Project extends Scene {
         generateCube();
 
         // Creating player
-        let person_transform = model_transform
-            .times(Mat4.translation(0, 0, -this.distanceTravelled))
-            .times(Mat4.scale(0.5, 0.5, 0.5));
+        this.person_transform = model_transform
+            .times(Mat4.translation(0, 0, -this.distanceTravelled));
         this.distanceTravelled += speed;
+
+        this.left = Mat4.translation(-3,0,0);
+        this.right = Mat4.translation(3, 0, 0);
+
+        if (this.playerMove && this.playerMove() !== null) {
+            this.person_transform = this.person_transform.times(this.playerMove());
+        }
+
         this.shapes.person.draw(
             context,
             program_state,
-            person_transform,
+            this.person_transform,
             this.materials.phong.override({ color: hex_color("#e3d8d8") })
         );
 
+        // attack camera to player, including on moves to left or right
         let desired = Mat4.inverse(
-            person_transform.times(Mat4.translation(0, 0, distanceFromPlayer))
-        );
-        program_state.set_camera(desired);
+            this.person_transform.times(Mat4.translation(0, 0, distanceFromPlayer))
+        )
+        let blending_factor = 0.1;
+        let mixed = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, blending_factor))
+        program_state.set_camera(mixed);
     }
 }
 

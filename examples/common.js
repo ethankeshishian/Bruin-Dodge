@@ -872,7 +872,7 @@ const Movement_Controls = defs.Movement_Controls =
             // make_control_panel(): Sets up a panel of interactive HTML elements, including
             // buttons with key bindings for affecting this scene, and live info readouts.
             this.control_panel.innerHTML += "Click and drag the scene to spin your viewpoint around it.<br>";
-            this.live_string(box => box.textContent = "- Position: " + this.pos[0].toFixed(2) + ", " + this.pos[1].toFixed(2)
+            this.live_string(box => box.textContent = "- Position: " + parseFloat(-this.pos[0]).toFixed(2) + ", " + this.pos[1].toFixed(2)
                 + ", " + this.pos[2].toFixed(2));
             this.new_line();
             // The facing directions are surprisingly affected by the left hand rule:
