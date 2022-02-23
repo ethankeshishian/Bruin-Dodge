@@ -60,6 +60,8 @@ export class Project extends Scene {
         );
 
         this.cubes = Array();
+
+        this.distanceTravelled = 0;
     }
 
     make_control_panel() {
@@ -82,34 +84,37 @@ export class Project extends Scene {
             100
         );
 
-        const light_position = vec4(10, 10, 10, 1);
-        program_state.lights = [
-            new Light(light_position, color(1, 1, 1, 1), 1000),
-        ];
 
+        // Important variables
         let t = program_state.animation_time / 1000,
             dt = program_state.animation_delta_time / 1000;
         let model_transform = Mat4.identity();
 
         let distanceFromPlayer = 10;
-        let speed = t * 20;
+        let speed = .3;
 
-        // Generating cubes
         let z = -30;
         let l = z * (1 / (context.width / context.height));
         let r = -l;
 
+        // Creating lighting
+        const light_position = vec4(0, 10, -(this.distanceTravelled), 1);
+        program_state.lights = [
+            new Light(light_position, color(1, 1, 1, 1), 1000),
+        ];
+
+        // Creating cubes
         const generateCube = () => {
             let randX = Math.floor(Math.random() * (r - l) + l);
             this.cubes.push({
                 x: randX,
-                // z: playerZ,
+                z: -this.distanceTravelled + z,
             });
             this.cubes.map((cube) =>
                 this.shapes.cube.draw(
                     context,
                     program_state,
-                    model_transform.times(Mat4.translation(cube.x, 0, z)),
+                    model_transform.times(Mat4.translation(cube.x, 0, cube.z)),
                     this.materials.phong.override({
                         color: hex_color("ffff00"),
                     })
@@ -118,12 +123,12 @@ export class Project extends Scene {
         };
 
         generateCube();
-        // setInterval(generateCube, 1000);
-        // this.shapes.box_1.draw(context, program_state, model_transform.times(Mat4.translation(r, 0, z)), this.materials.phong.override({color: hex_color("ffff00")}));
 
+        // Creating player
         let person_transform = model_transform
+            .times(Mat4.translation(0, 0, -this.distanceTravelled))
             .times(Mat4.scale(0.5, 0.5, 0.5));
-        person_transform = person_transform.times(Mat4.translation(0, 0, -speed));
+        this.distanceTravelled += speed;
         this.shapes.person.draw(
             context,
             program_state,
