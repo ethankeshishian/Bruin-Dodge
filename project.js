@@ -41,6 +41,8 @@ export class Project extends Scene {
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
+
+        this.cubes = Array();
     }
 
     make_control_panel() {
@@ -63,9 +65,24 @@ export class Project extends Scene {
         let t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
         let model_transform = Mat4.identity();
 
-        // TODO:  Draw the required boxes. Also update their stored matrices.
-        // You can remove the folloeing line.
-        this.shapes.axis.draw(context, program_state, model_transform, this.materials.phong.override({color: hex_color("#ffff00")}));
+        // Generating cubes
+        let z = -30;
+        let l = z * (1 / (context.width / context.height));
+        let r = -l;
+
+        const generateCube = () => {
+            let randX = Math.floor(Math.random() * (r - l) + l);
+            this.cubes.push({
+                x: randX,
+                // z: playerZ,
+            });
+            this.cubes.map(cube => this.shapes.box_1.draw(context, program_state, model_transform.times(Mat4.translation(cube.x, 0, z)), this.materials.phong.override({color: hex_color("ffff00")}))
+            )
+        }
+
+        generateCube();
+        // setInterval(generateCube, 1000);
+        // this.shapes.box_1.draw(context, program_state, model_transform.times(Mat4.translation(r, 0, z)), this.materials.phong.override({color: hex_color("ffff00")}));
     }
 }
 
