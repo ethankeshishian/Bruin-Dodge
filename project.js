@@ -4,7 +4,7 @@ const {
     Vector, Vector3, vec, vec3, vec4, color, hex_color, Shader, Matrix, Mat4, Light, Shape, Material, Scene, Texture,
 } = tiny;
 
-const {Cube, Axis_Arrows, Textured_Phong} = defs
+const {Sphere, Cube, Axis_Arrows, Textured_Phong} = defs
 
 export class Project extends Scene {
     /**
@@ -19,12 +19,9 @@ export class Project extends Scene {
         //        texture coordinates as required for cube #2.  You can either do this by modifying the cube code or by modifying
         //        a cube instance's texture_coords after it is already created.
         this.shapes = {
-            box_1: new Cube(),
-            box_2: new Cube(),
-            axis: new Axis_Arrows()
+            person: new defs.Subdivision_Sphere(4),
+            cube: new Cube(),
         }
-        console.log(this.shapes.box_1.arrays.texture_coord)
-
 
         // TODO:  Create the materials required to texture both cubes with the correct images and settings.
         //        Make each Material from the correct shader.  Phong_Shader will work initially, but when
@@ -64,8 +61,12 @@ export class Project extends Scene {
         let model_transform = Mat4.identity();
 
         // TODO:  Draw the required boxes. Also update their stored matrices.
-        // You can remove the folloeing line.
-        this.shapes.axis.draw(context, program_state, model_transform, this.materials.phong.override({color: hex_color("#ffff00")}));
+        let person_transform = model_transform.times(Mat4.translation(0,-3,0)).times(Mat4.scale(0.5,0.5, 0.5));
+        person_transform = person_transform.times(Mat4.translation(0,0, -t));
+        this.shapes.person.draw(context, program_state, person_transform, this.materials.phong.override({color: hex_color("#e3d8d8")}));
+
+        let desired = Mat4.inverse(person_transform.times(Mat4.translation(0, 0, 5)));
+        program_state.set_camera(desired);
     }
 }
 
