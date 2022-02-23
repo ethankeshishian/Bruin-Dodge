@@ -91,6 +91,9 @@ export class Project extends Scene {
             dt = program_state.animation_delta_time / 1000;
         let model_transform = Mat4.identity();
 
+        let distanceFromPlayer = 10;
+        let speed = t * 20;
+
         // Generating cubes
         let z = -30;
         let l = z * (1 / (context.width / context.height));
@@ -103,7 +106,7 @@ export class Project extends Scene {
                 // z: playerZ,
             });
             this.cubes.map((cube) =>
-                this.shapes.box_1.draw(
+                this.shapes.cube.draw(
                     context,
                     program_state,
                     model_transform.times(Mat4.translation(cube.x, 0, z)),
@@ -119,9 +122,8 @@ export class Project extends Scene {
         // this.shapes.box_1.draw(context, program_state, model_transform.times(Mat4.translation(r, 0, z)), this.materials.phong.override({color: hex_color("ffff00")}));
 
         let person_transform = model_transform
-            .times(Mat4.translation(0, -3, 0))
             .times(Mat4.scale(0.5, 0.5, 0.5));
-        person_transform = person_transform.times(Mat4.translation(0, 0, -t));
+        person_transform = person_transform.times(Mat4.translation(0, 0, -speed));
         this.shapes.person.draw(
             context,
             program_state,
@@ -130,7 +132,7 @@ export class Project extends Scene {
         );
 
         let desired = Mat4.inverse(
-            person_transform.times(Mat4.translation(0, 0, 5))
+            person_transform.times(Mat4.translation(0, 0, distanceFromPlayer))
         );
         program_state.set_camera(desired);
     }
