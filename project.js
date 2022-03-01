@@ -109,10 +109,10 @@ export class Project extends Scene {
 
         // Creating cubes
         const generateCube = () => {
-            let randX = Math.floor(Math.random() * (r - l) + l);
+
             this.cubes.push({
-                x: randX,
-                z: -this.distanceTravelled + z,
+                x: Math.floor(Math.random() * (r - l) + l) * Math.floor(Math.random() * (r - l) + l) ,
+                z: (-this.distanceTravelled + z),
             });
             this.cubes.map((cube) =>
                 this.shapes.cube.draw(
@@ -133,8 +133,8 @@ export class Project extends Scene {
             .times(Mat4.translation(0, 0, -this.distanceTravelled));
         this.distanceTravelled += speed;
 
-        this.left = Mat4.translation(-3,0,0);
-        this.right = Mat4.translation(3, 0, 0);
+        this.left = Mat4.translation(-2,0,0);
+        this.right = Mat4.translation(2, 0, 0);
 
         if (this.playerMove && this.playerMove() !== null) {
             this.person_transform = this.person_transform.times(this.playerMove());
@@ -147,9 +147,9 @@ export class Project extends Scene {
             this.materials.phong.override({ color: hex_color("#e3d8d8") })
         );
 
-        // attack camera to player, including on moves to left or right
+        // attach camera to player, including on moves to left or right
         let desired = Mat4.inverse(
-            this.person_transform.times(Mat4.translation(0, 0, distanceFromPlayer))
+            this.person_transform.times(Mat4.translation(0, 5, distanceFromPlayer))
         )
         let blending_factor = 0.1;
         let mixed = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, blending_factor))
