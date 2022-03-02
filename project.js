@@ -110,10 +110,9 @@ export class Project extends Scene {
                 x: Math.floor(Math.random() * (r - l) + l) * Math.floor(Math.random() * (r - l) + l),
                 z: (-this.distanceTravelled + z),
             });
-            if (this.cubes.length > 500) {
-                this.cubes.shift();
-            }
-            this.cubes.map((cube) =>
+            for (let i = 0; i < this.cubes.length; i++){
+                let cube = this.cubes[i];
+                ((-cube.z + distanceFromPlayer) < this.distanceTravelled) ? this.cubes.splice(i, 1) :
                 this.shapes.cube.draw(
                     context,
                     program_state,
@@ -121,8 +120,8 @@ export class Project extends Scene {
                     this.materials.phong.override({
                         color: hex_color("ffff00"),
                     })
-                )
-            );
+                );
+            }
         };
 
         generateCube();
