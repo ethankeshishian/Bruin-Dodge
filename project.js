@@ -102,11 +102,13 @@ export class Project extends Scene {
         let model_transform = Mat4.identity();
 
         let distanceFromPlayer = 10;
-        let speed = .3;
+        let speed = .5;
 
-        let z = -30;
-        let l = z * (1 / (context.width / context.height));
-        let r = -l;
+        let z = -100;
+        let screen_width = -z;
+        // let aspect_ratio = (context.width / context.height);
+        let l = -screen_width + this.control_movement[0][3];
+        let r = screen_width + this.control_movement[0][3];
 
         // Creating lighting
         const light_position = vec4(this.control_movement[0][3], 10, -(this.distanceTravelled), 1);
@@ -116,8 +118,10 @@ export class Project extends Scene {
 
         // Creating cubes
         const generateCube = () => {
+            let randX = Math.floor(Math.random() * (r - l) + l);
+            console.log(randX);
             this.cubes.push({
-                x: Math.floor(Math.random() * (r - l) + l) * Math.floor(Math.random() * (r - l) + l),
+                x: randX,
                 z: (-this.distanceTravelled + z),
             });
             for (let i = 0; i < this.cubes.length; i++){
