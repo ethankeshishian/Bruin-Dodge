@@ -68,6 +68,7 @@ export class Project extends Scene {
 
         this.left = Mat4.translation(-2,0,0);
         this.right = Mat4.translation(2, 0, 0);
+        this.roll = 0;
 
         this.distanceTravelled = 0;
     }
@@ -75,9 +76,17 @@ export class Project extends Scene {
     make_control_panel() {
         // implement movements to left and right
         this.key_triggered_button("Dodge to left", ["ArrowLeft"],
-            () => this.control_movement = this.control_movement.times(this.left));
+            () => {
+            this.control_movement = this.control_movement.times(this.left);
+            this.roll = 1;
+        },
+            undefined, () => this.roll = 0);
         this.key_triggered_button("Dodge to right", ["ArrowRight"],
-            () => this.control_movement = this.control_movement.times(this.right));
+            () => {
+            this.control_movement = this.control_movement.times(this.right);
+            this.roll = -1;
+        },
+             undefined, () => this.roll = 0);
     }
 
     display(context, program_state) {
@@ -148,6 +157,8 @@ export class Project extends Scene {
         this.person_transform = model_transform
             .times(Mat4.translation(0, 0, -this.distanceTravelled)).times(this.control_movement);
         this.distanceTravelled += speed;
+
+        this.person_transform.post_multiply(Mat4.rotation(.1 * this.roll, 0, 0, 1));
 
         this.shapes.person.draw(
             context,
