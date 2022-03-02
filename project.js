@@ -113,6 +113,9 @@ export class Project extends Scene {
                 x: Math.floor(Math.random() * (r - l) + l) * Math.floor(Math.random() * (r - l) + l),
                 z: (-this.distanceTravelled + z),
             });
+            if (this.cubes.length > 500) {
+                this.cubes.shift();
+            }
             this.cubes.map((cube) =>
                 this.shapes.cube.draw(
                     context,
