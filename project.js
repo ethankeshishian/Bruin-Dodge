@@ -45,7 +45,17 @@ export class Project extends Scene {
         this.materials = {
             phong: new Material(new Textured_Phong(), {
                 color: hex_color("#ffffff"),
-            })
+            }),
+            daddygene: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1, diffusivity: 0.1, specularity: 0.1,
+                texture: new Texture("assets/gene.jpg", "NEAREST")
+            }),
+            asish: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1, diffusivity: 0.1, specularity: 0.1,
+                texture: new Texture("assets/asish.jpg", "NEAREST")
+            }),
         };
 
         this.initial_camera_location = Mat4.look_at(
@@ -117,9 +127,10 @@ export class Project extends Scene {
                     context,
                     program_state,
                     model_transform.times(Mat4.translation(cube.x, 0, cube.z)),
-                    this.materials.phong.override({
-                        color: hex_color("ffff00"),
-                    })
+                    this.materials.daddygene
+                    // this.materials.phong.override({
+                    //     color: hex_color("ffff00"),
+                    // })
                 );
             }
         };
@@ -134,8 +145,9 @@ export class Project extends Scene {
         this.shapes.person.draw(
             context,
             program_state,
-            this.person_transform,
-            this.materials.phong.override({ color: hex_color("#e3d8d8") })
+            this.person_transform.times(Mat4.rotation(Math.PI / 0.70, 0, 1, -0.2)),
+            // this.materials.phong.override({ color: hex_color("#e3d8d8") })
+            this.materials.asish
         );
 
         // attach camera to player, including on moves to left or right
