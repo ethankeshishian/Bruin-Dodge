@@ -44,14 +44,7 @@ export class Project extends Scene {
         this.materials = {
             phong: new Material(new Textured_Phong(), {
                 color: hex_color("#ffffff"),
-            }),
-            texture: new Material(new Textured_Phong(), {
-                color: hex_color("#ffffff"),
-                ambient: 0.5,
-                diffusivity: 0.1,
-                specularity: 0.1,
-                texture: new Texture("assets/stars.png"),
-            }),
+            })
         };
 
         this.initial_camera_location = Mat4.look_at(
@@ -109,9 +102,8 @@ export class Project extends Scene {
 
         // Creating cubes
         const generateCube = () => {
-
             this.cubes.push({
-                x: Math.floor(Math.random() * (r - l) + l) * Math.floor(Math.random() * (r - l) + l) ,
+                x: Math.floor(Math.random() * (r - l) + l) * Math.floor(Math.random() * (r - l) + l),
                 z: (-this.distanceTravelled + z),
             });
             this.cubes.map((cube) =>
@@ -154,50 +146,5 @@ export class Project extends Scene {
         let blending_factor = 0.1;
         let mixed = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, blending_factor))
         program_state.set_camera(mixed);
-    }
-}
-
-class Texture_Scroll_X extends Textured_Phong {
-    // TODO:  Modify the shader below (right now it's just the same fragment shader as Textured_Phong) for requirement #6.
-    fragment_glsl_code() {
-        return (
-            this.shared_glsl_code() +
-            `
-            varying vec2 f_tex_coord;
-            uniform sampler2D texture;
-            uniform float animation_time;
-            
-            void main(){
-                // Sample the texture image in the correct place:
-                vec4 tex_color = texture2D( texture, f_tex_coord);
-                if( tex_color.w < .01 ) discard;
-                                                                         // Compute an initial (ambient) color:
-                gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
-                                                                         // Compute the final color with contributions from lights:
-                gl_FragColor.xyz += phong_model_lights( normalize( N ), vertex_worldspace );
-        } `
-        );
-    }
-}
-
-class Texture_Rotate extends Textured_Phong {
-    // TODO:  Modify the shader below (right now it's just the same fragment shader as Textured_Phong) for requirement #7.
-    fragment_glsl_code() {
-        return (
-            this.shared_glsl_code() +
-            `
-            varying vec2 f_tex_coord;
-            uniform sampler2D texture;
-            uniform float animation_time;
-            void main(){
-                // Sample the texture image in the correct place:
-                vec4 tex_color = texture2D( texture, f_tex_coord );
-                if( tex_color.w < .01 ) discard;
-                                                                         // Compute an initial (ambient) color:
-                gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
-                                                                         // Compute the final color with contributions from lights:
-                gl_FragColor.xyz += phong_model_lights( normalize( N ), vertex_worldspace );
-        } `
-        );
     }
 }
