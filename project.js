@@ -102,7 +102,11 @@ export class Project extends Scene {
         let model_transform = Mat4.identity();
 
         let distanceFromPlayer = 10;
-        let speed = .5;
+        let speed_scaling_factor = .05;
+        let base_speed = .25;
+        let max_speedup = .75;
+        let speed = base_speed + Math.min(max_speedup, Math.max(t * speed_scaling_factor));
+        console.log(speed);
 
         let z = -100;
         let screen_width = -z;
@@ -119,7 +123,6 @@ export class Project extends Scene {
         // Creating cubes
         const generateCube = () => {
             let randX = Math.floor(Math.random() * (r - l) + l);
-            console.log(randX);
             this.cubes.push({
                 x: randX,
                 z: (-this.distanceTravelled + z),
