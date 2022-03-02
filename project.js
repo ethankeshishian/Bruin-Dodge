@@ -28,7 +28,8 @@ export class Project extends Scene {
     constructor() {
         // constructor(): Scenes begin by populating initial values like the Shapes and Materials they'll need.
         super();
-        this.person_transform = null;
+        this.person_transform = Mat4.identity();
+        this.control_movement = Mat4.identity();
 
         // TODO:  Create two cubes, including one with the default texture coordinates (from 0 to 1), and one with the modified
         //        texture coordinates as required for cube #2.  You can either do this by modifying the cube code or by modifying
@@ -55,15 +56,21 @@ export class Project extends Scene {
 
         this.cubes = Array();
 
+        this.left = Mat4.translation(-2,0,0);
+        this.right = Mat4.translation(2, 0, 0);
+
         this.distanceTravelled = 0;
+
+        this.go_left = false;
+        this.go_right = false;
     }
 
     make_control_panel() {
         // implement movements to left and right
         this.key_triggered_button("Dodge to left", ["ArrowLeft"],
-            () => this.playerMove = () => this.left);
+            () => this.go_left = true);
         this.key_triggered_button("Dodge to right", ["ArrowRight"],
-            () => this.playerMove = () => this.right);
+            () => this.go_right = true);
     }
 
     display(context, program_state) {
@@ -122,14 +129,19 @@ export class Project extends Scene {
 
         // Creating player
         this.person_transform = model_transform
-            .times(Mat4.translation(0, 0, -this.distanceTravelled));
+            .times(Mat4.translation(0, 0, -this.distanceTravelled)).times(this.control_movement);
         this.distanceTravelled += speed;
 
-        this.left = Mat4.translation(-2,0,0);
-        this.right = Mat4.translation(2, 0, 0);
+        if (this.go_left) {
+            this.person_transform = this.person_transform.times(this.left);
+            this.control_movement = this.control_movement.times(this.left);
+            this.go_left = false;
+        }
 
-        if (this.playerMove && this.playerMove() !== null) {
-            this.person_transform = this.person_transform.times(this.playerMove());
+        if (this.go_right) {
+            this.person_transform = this.person_transform.times(this.right);
+            this.control_movement = this.control_movement.times(this.right);
+            this.go_right = false;
         }
 
         this.shapes.person.draw(
