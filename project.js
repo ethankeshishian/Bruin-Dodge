@@ -60,17 +60,14 @@ export class Project extends Scene {
         this.right = Mat4.translation(2, 0, 0);
 
         this.distanceTravelled = 0;
-
-        this.go_left = false;
-        this.go_right = false;
     }
 
     make_control_panel() {
         // implement movements to left and right
         this.key_triggered_button("Dodge to left", ["ArrowLeft"],
-            () => this.go_left = true);
+            () => this.control_movement = this.control_movement.times(this.left));
         this.key_triggered_button("Dodge to right", ["ArrowRight"],
-            () => this.go_right = true);
+            () => this.control_movement = this.control_movement.times(this.right));
     }
 
     display(context, program_state) {
@@ -134,18 +131,6 @@ export class Project extends Scene {
         this.person_transform = model_transform
             .times(Mat4.translation(0, 0, -this.distanceTravelled)).times(this.control_movement);
         this.distanceTravelled += speed;
-
-        if (this.go_left) {
-            this.person_transform = this.person_transform.times(this.left);
-            this.control_movement = this.control_movement.times(this.left);
-            this.go_left = false;
-        }
-
-        if (this.go_right) {
-            this.person_transform = this.person_transform.times(this.right);
-            this.control_movement = this.control_movement.times(this.right);
-            this.go_right = false;
-        }
 
         this.shapes.person.draw(
             context,
