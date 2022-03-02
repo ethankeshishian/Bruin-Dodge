@@ -99,7 +99,7 @@ export class Project extends Scene {
         let r = -l;
 
         // Creating lighting
-        const light_position = vec4(0, 10, -(this.distanceTravelled), 1);
+        const light_position = vec4(this.control_movement[0][3], 10, -(this.distanceTravelled), 1);
         program_state.lights = [
             new Light(light_position, color(1, 1, 1, 1), 1000),
         ];
