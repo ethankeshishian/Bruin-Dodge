@@ -159,7 +159,7 @@ export class Project extends Scene {
         // Creating player
 
         if (this.move != 0)
-            this.control_movement = this.control_movement.times(Mat4.translation(this.move, 0, 0));
+            this.control_movement = this.control_movement.times(Mat4.translation(this.move * speed, 0, 0));
 
         this.person_transform = model_transform
             .times(Mat4.translation(0, 0, -this.distanceTravelled)).times(this.control_movement);
