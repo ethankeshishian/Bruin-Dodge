@@ -66,9 +66,10 @@ export class Project extends Scene {
 
         this.cubes = Array();
 
-        this.left = Mat4.translation(-2,0,0);
-        this.right = Mat4.translation(2, 0, 0);
+        // this.left = Mat4.translation(-2,0,0);
+        // this.right = Mat4.translation(2, 0, 0);
         this.roll = 0;
+        this.move = 0;
 
         this.distanceTravelled = 0;
     }
@@ -77,16 +78,18 @@ export class Project extends Scene {
         // implement movements to left and right
         this.key_triggered_button("Dodge to left", ["ArrowLeft"],
             () => {
-            this.control_movement = this.control_movement.times(this.left);
+            // this.control_movement = this.control_movement.times(this.left);
             this.roll = 1;
+            this.move = -0.5;
         },
-            undefined, () => this.roll = 0);
+            undefined, () => { this.roll = 0; this.move = 0; });
         this.key_triggered_button("Dodge to right", ["ArrowRight"],
             () => {
-            this.control_movement = this.control_movement.times(this.right);
+            // this.control_movement = this.control_movement.times(this.right);
             this.roll = -1;
+            this.move = 0.5;
         },
-             undefined, () => this.roll = 0);
+             undefined, () => { this.roll = 0; this.move = 0; });
     }
 
     display(context, program_state) {
@@ -154,6 +157,10 @@ export class Project extends Scene {
         generateCube();
 
         // Creating player
+
+        if (this.move != 0)
+            this.control_movement = this.control_movement.times(Mat4.translation(this.move, 0, 0));
+
         this.person_transform = model_transform
             .times(Mat4.translation(0, 0, -this.distanceTravelled)).times(this.control_movement);
         this.distanceTravelled += speed;
