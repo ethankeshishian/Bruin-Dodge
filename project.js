@@ -115,7 +115,8 @@ export class Project extends Scene {
         let base_speed = .25;
         let max_speedup = .75;
         let speed = base_speed + Math.min(max_speedup, Math.max(t * speed_scaling_factor));
-        console.log(speed);
+        const playerRadius = 1;
+        const cubeRadius = 1;
 
         let z = -100;
         let screen_width = -z;
@@ -138,16 +139,30 @@ export class Project extends Scene {
             });
             for (let i = 0; i < this.cubes.length; i++){
                 let cube = this.cubes[i];
+
+                // Remove cubes behind player
                 ((-cube.z + distanceFromPlayer) < this.distanceTravelled) ? this.cubes.splice(i, 1) :
-                this.shapes.cube.draw(
-                    context,
-                    program_state,
-                    model_transform.times(Mat4.translation(cube.x, 0, cube.z)),
-                    this.materials.daddygene
-                    // this.materials.phong.override({
-                    //     color: hex_color("ffff00"),
-                    // })
-                );
+                    this.shapes.cube.draw(
+                        context,
+                        program_state,
+                        model_transform.times(Mat4.translation(cube.x, 0, cube.z)),
+                        this.materials.daddygene
+                        // this.materials.phong.override({
+                        //     color: hex_color("ffff00"),
+                        // })
+                    );
+
+                // Collision detection
+                if ((((this.distanceTravelled + playerRadius) < (-cube.z + cubeRadius) && (this.distanceTravelled + playerRadius) > (-cube.z - cubeRadius)) ||
+                    ((this.distanceTravelled - playerRadius) < (-cube.z + cubeRadius) && (this.distanceTravelled - playerRadius) > (-cube.z - cubeRadius))) &&
+                    ((this.control_movement[0][3] + playerRadius) < (cube.x + cubeRadius) && ((this.control_movement[0][3] + playerRadius) > (cube.x - cubeRadius)) ||
+                    ((this.control_movement[0][3] - playerRadius) < (cube.x + cubeRadius) && ((this.control_movement[0][3] - playerRadius) > (cube.x - cubeRadius)))) ||
+                    (this.distanceTravelled < (-cube.z + cubeRadius) && this.distanceTravelled > (-cube.z - cubeRadius) && this.control_movement[0][3] < (cube.x + cubeRadius) && (this.control_movement[0][3] > (cube.x - cubeRadius)))){
+                    this.materials.phong.override({
+                        color: hex_color("ffff00"),
+                    })
+                    console.log("Collision");
+                }
             }
         };
 
