@@ -239,7 +239,7 @@ class Texture_Scale extends Textured_Phong {
             
             void main(){
                 // Sample the texture image in the correct place:
-                vec2 translated_tex_coord = vec2(f_tex_coord.x * 20.0, f_tex_coord.y * 20.0);
+                vec2 translated_tex_coord = vec2(f_tex_coord.x * 20.0, f_tex_coord.y * 20.0 - animation_time);
                 vec4 tex_color = texture2D( texture, translated_tex_coord);
                
                 if( tex_color.w < .01 ) discard;
