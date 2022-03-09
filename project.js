@@ -186,6 +186,17 @@ export class Project extends Scene {
 
         generateCube();
 
+        // Draw floor
+        let size = -z;
+        this.shapes.cube.draw(
+            context,
+            program_state,
+            model_transform.times(Mat4.scale(size, 1, size)).times(Mat4.translation(this.control_movement[0][3]/size, -cubeRadius * 2, -this.distanceTravelled/size)),
+            this.materials.phong.override({
+                color: hex_color("000000"),
+            })
+        );
+
         // Creating player
 
         if (this.move != 0)
