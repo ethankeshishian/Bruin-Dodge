@@ -46,6 +46,11 @@ export class Project extends Scene {
             phong: new Material(new Textured_Phong(), {
                 color: hex_color("#ffffff"),
             }),
+            ground: new Material(new Texture_Scale(), {
+                color: hex_color("#000000"),
+                ambient: 1, diffusivity: 0.1, specularity: 0.1,
+                texture: new Texture("assets/road.png", "NEAREST")
+            }),
             daddygene: new Material(new Textured_Phong(), {
                 color: hex_color("#000000"),
                 ambient: 1, diffusivity: 0.1, specularity: 0.1,
@@ -179,7 +184,7 @@ export class Project extends Scene {
                     this.materials.phong.override({
                         color: hex_color("ffff00"),
                     })
-                    console.log("Collision");
+                    if(!alert('You lost! Press ok to start new game.')){window.location.reload();}
                 }
             }
         };
@@ -192,14 +197,12 @@ export class Project extends Scene {
             context,
             program_state,
             model_transform.times(Mat4.scale(size, 1, size)).times(Mat4.translation(this.control_movement[0][3]/size, -cubeRadius * 2, -this.distanceTravelled/size)),
-            this.materials.phong.override({
-                color: hex_color("000000"),
-            })
+            this.materials.ground
         );
 
         // Creating player
 
-        if (this.move != 0)
+        if (this.move !== 0)
             this.control_movement = this.control_movement.times(Mat4.translation(this.move * speed, 0, 0));
 
         this.person_transform = model_transform
@@ -223,5 +226,27 @@ export class Project extends Scene {
         let blending_factor = 0.1;
         let mixed = desired.map((x,i) => Vector.from(program_state.camera_inverse[i]).mix(x, blending_factor))
         program_state.set_camera(mixed);
+    }
+}
+
+class Texture_Scale extends Textured_Phong {
+    // TODO:  Modify the shader below (right now it's just the same fragment shader as Textured_Phong) for requirement #6.
+    fragment_glsl_code() {
+        return this.shared_glsl_code() + `
+            varying vec2 f_tex_coord;
+            uniform sampler2D texture;
+            uniform float animation_time;
+            
+            void main(){
+                // Sample the texture image in the correct place:
+                vec2 translated_tex_coord = vec2(f_tex_coord.x * 20.0, f_tex_coord.y * 20.0);
+                vec4 tex_color = texture2D( texture, translated_tex_coord);
+               
+                if( tex_color.w < .01 ) discard;
+                                                                         // Compute an initial (ambient) color:
+                gl_FragColor = vec4( ( tex_color.xyz + shape_color.xyz ) * ambient, shape_color.w * tex_color.w ); 
+                                                                         // Compute the final color with contributions from lights:
+                gl_FragColor.xyz += phong_model_lights( normalize( N ), vertex_worldspace );
+        } `;
     }
 }
