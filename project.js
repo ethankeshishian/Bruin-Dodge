@@ -118,11 +118,11 @@ export class Project extends Scene {
             dt = program_state.animation_delta_time / 1000;
         let model_transform = Mat4.identity();
 
-        let distanceFromPlayer = 10;
-        let speed_scaling_factor = .05;
-        let base_speed = .25;
+        let speed_scaling_factor = .05; let base_speed = .25;
         let max_speedup = .75;
         let speed = base_speed + Math.min(max_speedup, Math.max(t * speed_scaling_factor));
+
+        let distanceFromPlayer = 10;
         const playerRadius = 1;
         const cubeRadius = 1;
 
@@ -196,7 +196,7 @@ export class Project extends Scene {
         this.shapes.cube.draw(
             context,
             program_state,
-            model_transform.times(Mat4.scale(size, 1, size)).times(Mat4.translation(this.control_movement[0][3]/size, -cubeRadius * 2, -this.distanceTravelled/size)),
+            model_transform.times(Mat4.scale(size * size, 1, size * size)).times(Mat4.translation(0, -cubeRadius * 2, -this.distanceTravelled/(size * size))),
             this.materials.ground
         );
 
@@ -239,7 +239,7 @@ class Texture_Scale extends Textured_Phong {
             
             void main(){
                 // Sample the texture image in the correct place:
-                vec2 translated_tex_coord = vec2(f_tex_coord.x * 20.0, f_tex_coord.y * 20.0 - animation_time);
+                vec2 translated_tex_coord = vec2(f_tex_coord.x * 2000.0, f_tex_coord.y * 2000.0 - animation_time * 3.0);
                 vec4 tex_color = texture2D( texture, translated_tex_coord);
                
                 if( tex_color.w < .01 ) discard;
