@@ -145,14 +145,29 @@ export class Project extends Scene {
 
                 // Remove cubes behind player
                 ((-cube.z + distanceFromPlayer) < this.distanceTravelled) ? this.cubes.splice(i, 1) :
-                    this.shapes.cube.draw(
+                    (this.shapes.cube.draw(
                         context,
                         program_state,
                         model_transform.times(Mat4.translation(cube.x, 0, cube.z)),
+                        this.materials.phong.override({
+                             color: hex_color("ffff00"),
+                        })
+                    ),
+                    this.shapes.cube.draw(
+                        context,
+                        program_state,
+                        model_transform.times(Mat4.translation(cube.x, 2, cube.z)),
+                        this.materials.phong.override({
+                            color: hex_color("ffff00"),
+                        })
+                    ),
+                    this.shapes.person.draw(
+                        context,
+                        program_state,
+                        model_transform.times(Mat4.translation(cube.x, 4, cube.z)).times(Mat4.rotation(Math.PI / 0.75, 0.2, 1, 0.45)),
+                        // this.materials.phong.override({ color: hex_color("#e3d8d8") })
                         this.materials.daddygene
-                        // this.materials.phong.override({
-                        //     color: hex_color("ffff00"),
-                        // })
+                    )
                     );
 
                 // Collision detection
