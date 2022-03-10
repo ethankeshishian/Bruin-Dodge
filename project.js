@@ -66,6 +66,11 @@ export class Project extends Scene {
                 ambient: 1, diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/legs.png", "NEAREST")
             }),
+            shirt: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 0.2, diffusivity: 0.1, specularity: 0,
+                texture: new Texture("assets/shirt.png", "NEAREST")
+            }),
         };
 
         this.initial_camera_location = Mat4.look_at(
@@ -160,7 +165,7 @@ export class Project extends Scene {
                         context,
                         program_state,
                         model_transform.times(Mat4.translation(cube.x, 2, cube.z)),
-                        this.materials.phong
+                        this.materials.shirt
                              .override({
                              color: cube.color,
                         })
