@@ -192,13 +192,25 @@ export class Project extends Scene {
         generateCube();
 
         // Draw floor
-        let size = -z;
+        let size = -1000;
+        let zTranslation = -this.distanceTravelled/size;
+        let xTranslation = (this.control_movement[0][3])/(size);
+        let leftx = Math.floor(xTranslation) - .5;
+        let rightx = Math.floor(xTranslation) + .5;
         this.shapes.cube.draw(
             context,
             program_state,
-            model_transform.times(Mat4.scale(size * size, 1, size * size)).times(Mat4.translation(0, -cubeRadius * 2, -this.distanceTravelled/(size * size))),
+            model_transform.times(Mat4.scale(size, 1, size)).times(Mat4.translation(leftx, -cubeRadius * 2, Math.floor(zTranslation) +.5)),
             this.materials.ground
         );
+        this.shapes.cube.draw(
+            context,
+            program_state,
+            model_transform.times(Mat4.scale(size, 1, size)).times(Mat4.translation(rightx, -cubeRadius * 2, Math.floor(zTranslation) +.5)),
+            this.materials.ground
+        );
+        console.log("z", zTranslation, "x", xTranslation);
+        console.log(rightx, leftx);
 
         // Creating player
 
@@ -239,7 +251,7 @@ class Texture_Scale extends Textured_Phong {
             
             void main(){
                 // Sample the texture image in the correct place:
-                vec2 translated_tex_coord = vec2(f_tex_coord.x * 2000.0, f_tex_coord.y * 2000.0 - animation_time * 3.0);
+                vec2 translated_tex_coord = vec2(f_tex_coord.x * 200.0, f_tex_coord.y * 200.0);
                 vec4 tex_color = texture2D( texture, translated_tex_coord);
                
                 if( tex_color.w < .01 ) discard;
