@@ -61,6 +61,11 @@ export class Project extends Scene {
                 ambient: 1, diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/asish.jpg", "NEAREST")
             }),
+            legs: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1, diffusivity: 0.1, specularity: 0.1,
+                texture: new Texture("assets/legs.png", "NEAREST")
+            }),
         };
 
         this.initial_camera_location = Mat4.look_at(
@@ -144,6 +149,7 @@ export class Project extends Scene {
             this.cubes.push({
                 x: randX,
                 z: (-this.distanceTravelled + z),
+                color: color(Math.random(), Math.random(), Math.random(), 1.0)
             });
             for (let i = 0; i < this.cubes.length; i++){
                 let cube = this.cubes[i];
@@ -154,16 +160,15 @@ export class Project extends Scene {
                         context,
                         program_state,
                         model_transform.times(Mat4.translation(cube.x, 0, cube.z)),
-                        this.materials.phong.override({
-                             color: hex_color("ffff00"),
-                        })
+                        this.materials.legs
                     ),
                     this.shapes.cube.draw(
                         context,
                         program_state,
                         model_transform.times(Mat4.translation(cube.x, 2, cube.z)),
-                        this.materials.phong.override({
-                            color: hex_color("ffff00"),
+                        this.materials.phong
+                             .override({
+                             color: cube.color,
                         })
                     ),
                     this.shapes.person.draw(
