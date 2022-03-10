@@ -184,7 +184,7 @@ export class Project extends Scene {
                     this.materials.phong.override({
                         color: hex_color("ffff00"),
                     })
-                    if(!alert('You lost! Press ok to start new game.')){window.location.reload();}
+                    if(!alert('You lost! Your score was ' + this.distanceTravelled.toFixed(2) + '. Press ok to start new game.')){window.location.reload();}
                 }
             }
         };
