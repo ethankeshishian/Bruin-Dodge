@@ -85,7 +85,8 @@ export class Project extends Scene {
         // this.right = Mat4.translation(2, 0, 0);
         this.roll = 0;
         this.move = 0;
-
+        this.pause = false
+        this.speed = 0
         this.distanceTravelled = 0;
     }
 
@@ -105,6 +106,11 @@ export class Project extends Scene {
             this.move = 0.5;
         },
              undefined, () => { this.roll = 0; this.move = 0; });
+        this.key_triggered_button("Pause", ["k"],
+            () => {
+                // this.control_movement = this.control_movement.times(this.right);
+                this.pause = !this.pause
+            });
     }
 
     display(context, program_state) {
@@ -130,7 +136,11 @@ export class Project extends Scene {
 
         let speed_scaling_factor = .05; let base_speed = .25;
         let max_speedup = .75;
-        let speed = base_speed + Math.min(max_speedup, Math.max(t * speed_scaling_factor));
+        this.speed = base_speed + Math.min(max_speedup, Math.max(t * speed_scaling_factor));
+
+        if (this.pause){
+            this.speed = 0
+        }
 
         let distanceFromPlayer = 10;
         const playerRadius = 1;
@@ -213,11 +223,11 @@ export class Project extends Scene {
         // Creating player
 
         if (this.move !== 0)
-            this.control_movement = this.control_movement.times(Mat4.translation(this.move * speed, 0, 0));
+            this.control_movement = this.control_movement.times(Mat4.translation(this.move * this.speed, 0, 0));
 
         this.person_transform = model_transform
             .times(Mat4.translation(0, 0, -this.distanceTravelled)).times(this.control_movement);
-        this.distanceTravelled += speed;
+        this.distanceTravelled += this.speed;
 
         this.person_transform.post_multiply(Mat4.rotation(.1 * this.roll, 0, 0, 1));
 
