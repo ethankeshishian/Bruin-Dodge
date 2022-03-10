@@ -3,8 +3,6 @@
 ## Tasks:
 
 - Gene's clothes
-- Ground x direction size
-- Ground speed
 - Score counter
 
 ### Possible Extra:

@@ -183,13 +183,13 @@ export class Project extends Scene {
                     (this.shapes.cube.draw(
                             context,
                             program_state,
-                            model_transform.times(Mat4.translation(cube.x - 0.5, 0, cube.z)).times(Mat4.scale(0.25, 1, 0.5)),
+                            model_transform.times(Mat4.translation(cube.x - cubeRadius/2, 0, cube.z)).times(Mat4.scale(cubeRadius/4, 1, cubeRadius/2)),
                             this.materials.phong.override({ color: hex_color("#e3d8d8") })
                         ),
                     this.shapes.cube.draw(
                         context,
                         program_state,
-                        model_transform.times(Mat4.translation(cube.x + 0.5, 0, cube.z)).times(Mat4.scale(0.25, 1, 0.5)),
+                        model_transform.times(Mat4.translation(cube.x + cubeRadius/2, 0, cube.z)).times(Mat4.scale(cubeRadius/4, 1, cubeRadius/2)),
                         this.materials.phong.override({ color: hex_color("#e3d8d8") })
                     ),
                     this.shapes.person.draw(
@@ -202,11 +202,13 @@ export class Project extends Scene {
                     );
 
                 // Collision detection
-                if ((((this.distanceTravelled + playerRadius) < (-cube.z + cubeRadius) && (this.distanceTravelled + playerRadius) > (-cube.z - cubeRadius)) ||
-                    ((this.distanceTravelled - playerRadius) < (-cube.z + cubeRadius) && (this.distanceTravelled - playerRadius) > (-cube.z - cubeRadius))) &&
-                    ((this.control_movement[0][3] + playerRadius) < (cube.x + cubeRadius) && ((this.control_movement[0][3] + playerRadius) > (cube.x - cubeRadius)) ||
-                    ((this.control_movement[0][3] - playerRadius) < (cube.x + cubeRadius) && ((this.control_movement[0][3] - playerRadius) > (cube.x - cubeRadius)))) ||
-                    (this.distanceTravelled < (-cube.z + cubeRadius) && this.distanceTravelled > (-cube.z - cubeRadius) && this.control_movement[0][3] < (cube.x + cubeRadius) && (this.control_movement[0][3] > (cube.x - cubeRadius)))){
+                let cubeRadiusX = cubeRadius/4 * 3;
+                let cubeRadiusZ = cubeRadius/2;
+                if ((((this.distanceTravelled + playerRadius) < (-cube.z + cubeRadiusZ) && (this.distanceTravelled + playerRadius) > (-cube.z - cubeRadiusZ)) ||
+                    ((this.distanceTravelled - playerRadius) < (-cube.z + cubeRadiusZ) && (this.distanceTravelled - playerRadius) > (-cube.z - cubeRadiusZ))) &&
+                    ((this.control_movement[0][3] + playerRadius) < (cube.x + cubeRadiusX) && ((this.control_movement[0][3] + playerRadius) > (cube.x - cubeRadiusX)) ||
+                    ((this.control_movement[0][3] - playerRadius) < (cube.x + cubeRadiusX) && ((this.control_movement[0][3] - playerRadius) > (cube.x - cubeRadiusX)))) ||
+                    (this.distanceTravelled < (-cube.z + cubeRadiusZ) && this.distanceTravelled > (-cube.z - cubeRadiusZ) && this.control_movement[0][3] < (cube.x + cubeRadiusX) && (this.control_movement[0][3] > (cube.x - cubeRadiusX)))){
                     this.materials.phong.override({
                         color: hex_color("ffff00"),
                     })
