@@ -196,6 +196,18 @@ export class Project extends Scene {
                     model_transform.times(Mat4.translation(cube.x + cubeRadius/2, 0, cube.z)).times(Mat4.scale(cubeRadius/4, 1, cubeRadius/2)),
                     this.materials.phong.override({ color: hex_color("#e3d8d8") })
                 );
+                this.shapes.cube.draw(
+                    context,
+                    program_state,
+                    model_transform.times(Mat4.translation(cube.x - cubeRadius*1.2, 2, cube.z)).times(Mat4.rotation(-40/Math.PI, 0, 0, 1)).times(Mat4.scale(cubeRadius/4, 1, cubeRadius/2)),
+                    this.materials.phong.override({ color: hex_color("#e3d8d8") })
+                );
+                this.shapes.cube.draw(
+                    context,
+                    program_state,
+                    model_transform.times(Mat4.translation(cube.x + cubeRadius*1.2, 2, cube.z)).times(Mat4.rotation(40/Math.PI, 0, 0, 1)).times(Mat4.scale(cubeRadius/4, 1, cubeRadius/2)),
+                    this.materials.phong.override({ color: hex_color("#e3d8d8") })
+                );
                 this.shapes.person.draw(
                     context,
                     program_state,
