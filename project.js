@@ -156,12 +156,6 @@ export class Project extends Scene {
 
                 // Remove cubes behind player
                 ((-cube.z + distanceFromPlayer) < this.distanceTravelled) ? this.cubes.splice(i, 1) :
-                    (this.shapes.cube.draw(
-                        context,
-                        program_state,
-                        model_transform.times(Mat4.translation(cube.x, 0, cube.z)),
-                        this.materials.legs
-                    ),
                     this.shapes.cube.draw(
                         context,
                         program_state,
@@ -171,6 +165,12 @@ export class Project extends Scene {
                              color: cube.color,
                         })
                     ),
+                    (this.shapes.cube.draw(
+                            context,
+                            program_state,
+                            model_transform.times(Mat4.translation(cube.x, 0, cube.z)),
+                            this.materials.legs
+                        ),
                     this.shapes.person.draw(
                         context,
                         program_state,

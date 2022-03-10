@@ -881,7 +881,7 @@ const Movement_Controls = defs.Movement_Controls =
             this.new_line();
             this.new_line();
 
-            this.key_triggered_button("Up", [" "], () => this.thrust[1] = -1, undefined, () => this.thrust[1] = 0);
+            /*this.key_triggered_button("Up", [" "], () => this.thrust[1] = -1, undefined, () => this.thrust[1] = 0);
             this.key_triggered_button("Forward", ["w"], () => this.thrust[2] = 1, undefined, () => this.thrust[2] = 0);
             this.new_line();
             this.key_triggered_button("Left", ["a"], () => this.thrust[0] = 1, undefined, () => this.thrust[0] = 0);
@@ -934,6 +934,8 @@ const Movement_Controls = defs.Movement_Controls =
                     this.will_take_over_graphics_state = true
                 }, "#8B8885");
             this.new_line();
+
+             */
         }
 
         first_person_flyaround(radians_per_frame, meters_per_frame, leeway = 70) {
