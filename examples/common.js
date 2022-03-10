@@ -807,7 +807,7 @@ const Fake_Bump_Map = defs.Fake_Bump_Map =
 
 
 const Movement_Controls = defs.Movement_Controls =
-    class Movement_Controls extends Scene {
+    class Score_and_Position extends Scene {
         // **Movement_Controls** is a Scene that can be attached to a canvas, like any other
         // Scene, but it is a Secondary Scene Component -- meant to stack alongside other
         // scenes.  Rather than drawing anything it embeds both first-person and third-
@@ -871,15 +871,13 @@ const Movement_Controls = defs.Movement_Controls =
         make_control_panel() {
             // make_control_panel(): Sets up a panel of interactive HTML elements, including
             // buttons with key bindings for affecting this scene, and live info readouts.
-            this.control_panel.innerHTML += "Click and drag the scene to spin your viewpoint around it.<br>";
+            //this.control_panel.innerHTML += "Click and drag the scene to spin your viewpoint around it.<br>";
+            this.live_string(box => box.textContent = "- Score: " + parseFloat(this.pos[2]).toFixed(2));
+            this.new_line();
             this.live_string(box => box.textContent = "- Position: " + parseFloat(-this.pos[0]).toFixed(2) + ", " + parseFloat(-this.pos[1]).toFixed(2)
                 + ", " + this.pos[2].toFixed(2));
             this.new_line();
             // The facing directions are surprisingly affected by the left hand rule:
-            this.live_string(box => box.textContent = "- Facing: " + ((this.z_axis[0] > 0 ? "West " : "East ")
-                + (this.z_axis[1] > 0 ? "Down " : "Up ") + (this.z_axis[2] > 0 ? "North" : "South")));
-            this.new_line();
-            this.new_line();
 
             /*this.key_triggered_button("Up", [" "], () => this.thrust[1] = -1, undefined, () => this.thrust[1] = 0);
             this.key_triggered_button("Forward", ["w"], () => this.thrust[2] = 1, undefined, () => this.thrust[2] = 0);
