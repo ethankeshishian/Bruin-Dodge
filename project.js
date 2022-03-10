@@ -175,7 +175,7 @@ export class Project extends Scene {
                         context,
                         program_state,
                         model_transform.times(Mat4.translation(cube.x, 2, cube.z)),
-                        this.materials.shirt
+                        this.materials.phong
                              .override({
                              color: cube.color,
                         })
@@ -183,9 +183,15 @@ export class Project extends Scene {
                     (this.shapes.cube.draw(
                             context,
                             program_state,
-                            model_transform.times(Mat4.translation(cube.x, 0, cube.z)),
-                            this.materials.legs
+                            model_transform.times(Mat4.translation(cube.x - 0.5, 0, cube.z)).times(Mat4.scale(0.25, 1, 0.5)),
+                            this.materials.phong.override({ color: hex_color("#e3d8d8") })
                         ),
+                    this.shapes.cube.draw(
+                        context,
+                        program_state,
+                        model_transform.times(Mat4.translation(cube.x + 0.5, 0, cube.z)).times(Mat4.scale(0.25, 1, 0.5)),
+                        this.materials.phong.override({ color: hex_color("#e3d8d8") })
+                    ),
                     this.shapes.person.draw(
                         context,
                         program_state,
