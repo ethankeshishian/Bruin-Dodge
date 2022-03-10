@@ -45,21 +45,19 @@ export class Project extends Scene {
         this.materials = {
             phong: new Material(new Textured_Phong(), {
                 color: hex_color("#ffffff"),
+                specularity: 0,
+                // diffusivity: 0,
+                ambient: 0,
             }),
             ground: new Material(new Texture_Scale(), {
                 color: hex_color("#000000"),
                 ambient: 1, diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/road.png", "NEAREST")
             }),
-            daddygene: new Material(new Textured_Phong(), {
-                color: hex_color("#000000"),
+            player: new Material(new Textured_Phong(), {
+                color: hex_color("#3c4893"),
                 ambient: 1, diffusivity: 0.1, specularity: 0.1,
-                texture: new Texture("assets/gene.jpg", "NEAREST")
-            }),
-            asish: new Material(new Textured_Phong(), {
-                color: hex_color("#000000"),
-                ambient: 1, diffusivity: 0.1, specularity: 0.1,
-                texture: new Texture("assets/asish.jpg", "NEAREST")
+                texture: new Texture("assets/blue.png", "NEAREST")
             }),
             legs: new Material(new Textured_Phong(), {
                 color: hex_color("#000000"),
@@ -212,9 +210,8 @@ export class Project extends Scene {
                     context,
                     program_state,
                     model_transform.times(Mat4.translation(cube.x, 4, cube.z)).times(Mat4.rotation(Math.PI / 0.75, 0.2, 1, 0.45)),
-                    // this.materials.phong.override({ color: hex_color("#e3d8d8") })
-                    this.materials.daddygene
-                );
+                    this.materials.phong.override({ color: hex_color("#e3d8d8") })
+            );
 
                 // Collision detection
                 let cubeRadiusX = cubeRadius/4 * 3;
@@ -275,10 +272,9 @@ export class Project extends Scene {
         this.shapes.person.draw(
             context,
             program_state,
-            this.person_transform.times(Mat4.rotation(Math.PI / 0.70, 0, 1, -0.2)),
-            // this.materials.phong.override({ color: hex_color("#e3d8d8") })
-            this.materials.asish
-        );
+            this.person_transform,
+            this.materials.player
+    );
 
         // attach camera to player, including on moves to left or right
         let desired = Mat4.inverse(
