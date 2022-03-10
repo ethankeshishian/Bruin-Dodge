@@ -136,11 +136,7 @@ export class Project extends Scene {
 
         let speed_scaling_factor = .05; let base_speed = .25;
         let max_speedup = .75;
-        this.speed = base_speed + Math.min(max_speedup, Math.max(t * speed_scaling_factor));
-
-        if (this.pause){
-            this.speed = 0
-        }
+        this.speed = base_speed + Math.min(max_speedup, this.distanceTravelled * speed_scaling_factor);
 
         let distanceFromPlayer = 10;
         const playerRadius = 1;
@@ -166,48 +162,55 @@ export class Project extends Scene {
                 z: (-this.distanceTravelled + z),
                 color: color(Math.random(), Math.random(), Math.random(), 1.0)
             });
+            // Remove cubes behind player
+
+            for (let i = 0; i < this.cubes.length; i++) {
+                let cube = this.cubes[i];
+                if (-cube.z + distanceFromPlayer < this.distanceTravelled) this.cubes.splice(i, 1);
+            }
+
+        };
+
+        const drawCubes = () => {
             for (let i = 0; i < this.cubes.length; i++){
                 let cube = this.cubes[i];
 
-                // Remove cubes behind player
-                ((-cube.z + distanceFromPlayer) < this.distanceTravelled) ? this.cubes.splice(i, 1) :
-                    this.shapes.cube.draw(
+                this.shapes.cube.draw(
                         context,
                         program_state,
                         model_transform.times(Mat4.translation(cube.x, 2, cube.z)),
                         this.materials.phong
-                             .override({
-                             color: cube.color,
-                        })
-                    ),
-                    (this.shapes.cube.draw(
-                            context,
-                            program_state,
-                            model_transform.times(Mat4.translation(cube.x - cubeRadius/2, 0, cube.z)).times(Mat4.scale(cubeRadius/4, 1, cubeRadius/2)),
-                            this.materials.phong.override({ color: hex_color("#e3d8d8") })
-                        ),
-                    this.shapes.cube.draw(
-                        context,
-                        program_state,
-                        model_transform.times(Mat4.translation(cube.x + cubeRadius/2, 0, cube.z)).times(Mat4.scale(cubeRadius/4, 1, cubeRadius/2)),
-                        this.materials.phong.override({ color: hex_color("#e3d8d8") })
-                    ),
-                    this.shapes.person.draw(
-                        context,
-                        program_state,
-                        model_transform.times(Mat4.translation(cube.x, 4, cube.z)).times(Mat4.rotation(Math.PI / 0.75, 0.2, 1, 0.45)),
-                        // this.materials.phong.override({ color: hex_color("#e3d8d8") })
-                        this.materials.daddygene
-                    )
-                    );
+                            .override({
+                                color: cube.color,
+                            })
+                );
+                this.shapes.cube.draw(
+                    context,
+                    program_state,
+                    model_transform.times(Mat4.translation(cube.x - cubeRadius/2, 0, cube.z)).times(Mat4.scale(cubeRadius/4, 1, cubeRadius/2)),
+                    this.materials.phong.override({ color: hex_color("#e3d8d8") })
+                );
+                this.shapes.cube.draw(
+                    context,
+                    program_state,
+                    model_transform.times(Mat4.translation(cube.x + cubeRadius/2, 0, cube.z)).times(Mat4.scale(cubeRadius/4, 1, cubeRadius/2)),
+                    this.materials.phong.override({ color: hex_color("#e3d8d8") })
+                );
+                this.shapes.person.draw(
+                    context,
+                    program_state,
+                    model_transform.times(Mat4.translation(cube.x, 4, cube.z)).times(Mat4.rotation(Math.PI / 0.75, 0.2, 1, 0.45)),
+                    // this.materials.phong.override({ color: hex_color("#e3d8d8") })
+                    this.materials.daddygene
+                );
 
                 // Collision detection
                 let cubeRadiusX = cubeRadius/4 * 3;
                 let cubeRadiusZ = cubeRadius/2;
                 if ((((this.distanceTravelled + playerRadius) < (-cube.z + cubeRadiusZ) && (this.distanceTravelled + playerRadius) > (-cube.z - cubeRadiusZ)) ||
-                    ((this.distanceTravelled - playerRadius) < (-cube.z + cubeRadiusZ) && (this.distanceTravelled - playerRadius) > (-cube.z - cubeRadiusZ))) &&
+                        ((this.distanceTravelled - playerRadius) < (-cube.z + cubeRadiusZ) && (this.distanceTravelled - playerRadius) > (-cube.z - cubeRadiusZ))) &&
                     ((this.control_movement[0][3] + playerRadius) < (cube.x + cubeRadiusX) && ((this.control_movement[0][3] + playerRadius) > (cube.x - cubeRadiusX)) ||
-                    ((this.control_movement[0][3] - playerRadius) < (cube.x + cubeRadiusX) && ((this.control_movement[0][3] - playerRadius) > (cube.x - cubeRadiusX)))) ||
+                        ((this.control_movement[0][3] - playerRadius) < (cube.x + cubeRadiusX) && ((this.control_movement[0][3] - playerRadius) > (cube.x - cubeRadiusX)))) ||
                     (this.distanceTravelled < (-cube.z + cubeRadiusZ) && this.distanceTravelled > (-cube.z - cubeRadiusZ) && this.control_movement[0][3] < (cube.x + cubeRadiusX) && (this.control_movement[0][3] > (cube.x - cubeRadiusX)))){
                     this.materials.phong.override({
                         color: hex_color("ffff00"),
@@ -215,9 +218,17 @@ export class Project extends Scene {
                     if(!alert('You lost! Your score was ' + this.distanceTravelled.toFixed(2) + '. Press ok to start new game.')){window.location.reload();}
                 }
             }
-        };
+        }
 
-        generateCube();
+
+        if (this.pause){
+            this.speed = 0
+        }
+        else {
+            generateCube();
+        }
+
+        drawCubes();
 
         // Draw floor
         let size = -1000;
@@ -237,8 +248,6 @@ export class Project extends Scene {
             model_transform.times(Mat4.scale(size, 1, size)).times(Mat4.translation(rightx, -cubeRadius * 2, Math.floor(zTranslation) +.5)),
             this.materials.ground
         );
-        console.log("z", zTranslation, "x", xTranslation);
-        console.log(rightx, leftx);
 
         // Creating player
 
