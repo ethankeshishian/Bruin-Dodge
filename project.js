@@ -61,6 +61,16 @@ export class Project extends Scene {
                 ambient: 1, diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/asish.jpg", "NEAREST")
             }),
+            legs: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 1, diffusivity: 0.1, specularity: 0.1,
+                texture: new Texture("assets/legs.png", "NEAREST")
+            }),
+            shirt: new Material(new Textured_Phong(), {
+                color: hex_color("#000000"),
+                ambient: 0.2, diffusivity: 0.1, specularity: 0,
+                texture: new Texture("assets/shirt.png", "NEAREST")
+            }),
         };
 
         this.initial_camera_location = Mat4.look_at(
@@ -144,28 +154,28 @@ export class Project extends Scene {
             this.cubes.push({
                 x: randX,
                 z: (-this.distanceTravelled + z),
+                color: color(Math.random(), Math.random(), Math.random(), 1.0)
             });
             for (let i = 0; i < this.cubes.length; i++){
                 let cube = this.cubes[i];
 
                 // Remove cubes behind player
                 ((-cube.z + distanceFromPlayer) < this.distanceTravelled) ? this.cubes.splice(i, 1) :
-                    (this.shapes.cube.draw(
-                        context,
-                        program_state,
-                        model_transform.times(Mat4.translation(cube.x, 0, cube.z)),
-                        this.materials.phong.override({
-                             color: hex_color("ffff00"),
-                        })
-                    ),
                     this.shapes.cube.draw(
                         context,
                         program_state,
                         model_transform.times(Mat4.translation(cube.x, 2, cube.z)),
-                        this.materials.phong.override({
-                            color: hex_color("ffff00"),
+                        this.materials.shirt
+                             .override({
+                             color: cube.color,
                         })
                     ),
+                    (this.shapes.cube.draw(
+                            context,
+                            program_state,
+                            model_transform.times(Mat4.translation(cube.x, 0, cube.z)),
+                            this.materials.legs
+                        ),
                     this.shapes.person.draw(
                         context,
                         program_state,
@@ -184,7 +194,7 @@ export class Project extends Scene {
                     this.materials.phong.override({
                         color: hex_color("ffff00"),
                     })
-                    if(!alert('You lost! Press ok to start new game.')){window.location.reload();}
+                    if(!alert('You lost! Your score was ' + this.distanceTravelled.toFixed(2) + '. Press ok to start new game.')){window.location.reload();}
                 }
             }
         };
