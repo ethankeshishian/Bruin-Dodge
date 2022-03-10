@@ -46,7 +46,6 @@ export class Project extends Scene {
             phong: new Material(new Textured_Phong(), {
                 color: hex_color("#ffffff"),
                 specularity: 0,
-                // diffusivity: 0,
                 ambient: 0,
             }),
             ground: new Material(new Texture_Scale(), {
@@ -59,29 +58,11 @@ export class Project extends Scene {
                 ambient: 1, diffusivity: 0.1, specularity: 0.1,
                 texture: new Texture("assets/blue.png", "NEAREST")
             }),
-            legs: new Material(new Textured_Phong(), {
-                color: hex_color("#000000"),
-                ambient: 1, diffusivity: 0.1, specularity: 0.1,
-                texture: new Texture("assets/legs.png", "NEAREST")
-            }),
-            shirt: new Material(new Textured_Phong(), {
-                color: hex_color("#000000"),
-                ambient: 0.2, diffusivity: 0.1, specularity: 0,
-                texture: new Texture("assets/shirt.png", "NEAREST")
-            }),
         };
-
-        this.initial_camera_location = Mat4.look_at(
-            vec3(0, 10, 20),
-            vec3(0, 0, 0),
-            vec3(0, 1, 0)
-        );
 
         this.cubes = Array();
 
-        // this.left = Mat4.translation(-2,0,0);
-        // this.right = Mat4.translation(2, 0, 0);
-        this.roll = 0;
+        this.tilt = 0;
         this.move = 0;
         this.pause = false
         this.speed = 0
@@ -92,21 +73,18 @@ export class Project extends Scene {
         // implement movements to left and right
         this.key_triggered_button("Dodge to left", ["ArrowLeft"],
             () => {
-            // this.control_movement = this.control_movement.times(this.left);
-            this.roll = 1;
+            this.tilt = 1;
             this.move = -0.5;
-        },
-            undefined, () => { this.roll = 0; this.move = 0; });
+            },
+            undefined, () => { this.tilt = 0; this.move = 0; });
         this.key_triggered_button("Dodge to right", ["ArrowRight"],
             () => {
-            // this.control_movement = this.control_movement.times(this.right);
-            this.roll = -1;
+            this.tilt = -1;
             this.move = 0.5;
-        },
-             undefined, () => { this.roll = 0; this.move = 0; });
+            },
+            undefined, () => { this.tilt = 0; this.move = 0; });
         this.key_triggered_button("Pause", ["p"],
             () => {
-                // this.control_movement = this.control_movement.times(this.right);
                 this.pause = !this.pause
             });
     }
@@ -160,8 +138,8 @@ export class Project extends Scene {
                 z: (-this.distanceTravelled + z),
                 color: color(Math.random(), Math.random(), Math.random(), 1.0)
             });
-            // Remove cubes behind player
 
+            // Remove cubes behind player
             for (let i = 0; i < this.cubes.length; i++) {
                 let cube = this.cubes[i];
                 if (-cube.z + distanceFromPlayer < this.distanceTravelled) this.cubes.splice(i, 1);
@@ -217,21 +195,19 @@ export class Project extends Scene {
                 let cubeRadiusX = cubeRadius/4 * 3;
                 let cubeRadiusZ = cubeRadius/2;
                 if ((((this.distanceTravelled + playerRadius) < (-cube.z + cubeRadiusZ) && (this.distanceTravelled + playerRadius) > (-cube.z - cubeRadiusZ)) ||
-                        ((this.distanceTravelled - playerRadius) < (-cube.z + cubeRadiusZ) && (this.distanceTravelled - playerRadius) > (-cube.z - cubeRadiusZ))) &&
+                    ((this.distanceTravelled - playerRadius) < (-cube.z + cubeRadiusZ) && (this.distanceTravelled - playerRadius) > (-cube.z - cubeRadiusZ))) &&
                     ((this.control_movement[0][3] + playerRadius) < (cube.x + cubeRadiusX) && ((this.control_movement[0][3] + playerRadius) > (cube.x - cubeRadiusX)) ||
-                        ((this.control_movement[0][3] - playerRadius) < (cube.x + cubeRadiusX) && ((this.control_movement[0][3] - playerRadius) > (cube.x - cubeRadiusX)))) ||
-                    (this.distanceTravelled < (-cube.z + cubeRadiusZ) && this.distanceTravelled > (-cube.z - cubeRadiusZ) && this.control_movement[0][3] < (cube.x + cubeRadiusX) && (this.control_movement[0][3] > (cube.x - cubeRadiusX)))){
-                    this.materials.phong.override({
-                        color: hex_color("ffff00"),
-                    })
-                    if(!alert('You lost! Press ok to start new game.')){window.location.reload();}
-                }
+                    ((this.control_movement[0][3] - playerRadius) < (cube.x + cubeRadiusX) && ((this.control_movement[0][3] - playerRadius) > (cube.x - cubeRadiusX)))) ||
+                    (this.distanceTravelled < (-cube.z + cubeRadiusZ) && this.distanceTravelled > (-cube.z - cubeRadiusZ) && this.control_movement[0][3] < (cube.x + cubeRadiusX) && (this.control_movement[0][3] > (cube.x - cubeRadiusX))))
+                    {
+                        if(!alert('You lost! Press ok to start new game.')){window.location.reload();}
+                    }
             }
         }
 
 
-        if (this.pause){
-            this.speed = 0
+        if (this.pause) {
+            this.speed = 0;
         }
         else {
             generateCube();
@@ -259,7 +235,6 @@ export class Project extends Scene {
         );
 
         // Creating player
-
         if (this.move !== 0)
             this.control_movement = this.control_movement.times(Mat4.translation(this.move * this.speed, 0, 0));
 
@@ -267,7 +242,7 @@ export class Project extends Scene {
             .times(Mat4.translation(0, 0, -this.distanceTravelled)).times(this.control_movement);
         this.distanceTravelled += this.speed;
 
-        this.person_transform.post_multiply(Mat4.rotation(.1 * this.roll, 0, 0, 1));
+        this.person_transform.post_multiply(Mat4.rotation(.1 * this.tilt, 0, 0, 1));
 
         this.shapes.person.draw(
             context,
