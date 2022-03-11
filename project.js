@@ -31,17 +31,11 @@ export class Project extends Scene {
         this.person_transform = Mat4.identity();
         this.control_movement = Mat4.identity();
 
-        // TODO:  Create two cubes, including one with the default texture coordinates (from 0 to 1), and one with the modified
-        //        texture coordinates as required for cube #2.  You can either do this by modifying the cube code or by modifying
-        //        a cube instance's texture_coords after it is already created.
         this.shapes = {
             person: new defs.Subdivision_Sphere(4),
             cube: new Cube(),
         };
 
-        // TODO:  Create the materials required to texture both cubes with the correct images and settings.
-        //        Make each Material from the correct shader.  Phong_Shader will work initially, but when
-        //        you get to requirements 6 and 7 you will need different ones.
         this.materials = {
             phong: new Material(new Textured_Phong(), {
                 color: hex_color("#ffffff"),
@@ -262,7 +256,6 @@ export class Project extends Scene {
 }
 
 class Texture_Scale extends Textured_Phong {
-    // TODO:  Modify the shader below (right now it's just the same fragment shader as Textured_Phong) for requirement #6.
     fragment_glsl_code() {
         return this.shared_glsl_code() + `
             varying vec2 f_tex_coord;
